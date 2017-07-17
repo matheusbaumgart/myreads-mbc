@@ -14,20 +14,23 @@ class HomePage extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.getBooks()
     }
 
-    getBooks() {
-        // Get all books and sorte by shelves. (requires loadsh for the _.groupBy)
-        BooksAPI.getAll().then((res) => {
-            const sortedShelves = _.groupBy(res, (res) => {
-                return res.shelf
+    componentDidMount() {
+        this.sortBooks()
+        this.sortBooks = this.sortBooks.bind(this);
+    }
+
+    sortBooks() {
+        // Get all books and sort by shelves. (requires loadsh for the _.groupBy)
+        BooksAPI.getAll().then((books) => {
+            const sortedBooks = _.groupBy(books, (books) => {
+                return books.shelf
             })
 
             // Update state with the list of books grouped by shelf.
             this.setState({
-                books: sortedShelves
+                books: sortedBooks
             })
         })
     }
@@ -39,14 +42,11 @@ class HomePage extends React.Component {
                     <div className="list-books-title">
                         <h1>MyReads</h1>
                     </div>
-                    {!this.state.books != '' &&
-                        <span>Loading books..</span>
-                    }
-                    {this.state.books != '' &&
+                    {this.state.books !== '' &&
                         <div className="list-books-content">
-                            <Bookshelf title="Currently Reading" books={this.state.books.currentlyReading} />
-                            <Bookshelf title="Want to Read" books={this.state.books.wantToRead} />
-                            <Bookshelf title="Read" books={this.state.books.read} />
+                            <Bookshelf title="Currently Reading" books={this.state.books.currentlyReading} sortBooks={this.sortBooks} />
+                            <Bookshelf title="Want to Read" books={this.state.books.wantToRead} sortBooks={this.sortBooks} />
+                            <Bookshelf title="Read" books={this.state.books.read} sortBooks={this.sortBooks} />
                         </div>
                     }
                     <div className="open-search">
