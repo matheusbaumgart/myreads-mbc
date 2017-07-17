@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import _ from 'lodash'
 
 import * as BooksAPI from './BooksAPI'
@@ -10,10 +10,6 @@ import Bookshelf from './Bookshelf'
 class HomePage extends React.Component {
     state = {
         books: ''
-    }
-
-    constructor(props) {
-        super(props);
     }
 
     componentDidMount() {
