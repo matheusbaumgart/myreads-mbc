@@ -2,10 +2,30 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import './App.css'
 
+import * as BooksAPI from './BooksAPI'
+import Book from './Book'
+
 
 class SearchApp extends React.Component {
     state = {
+        query: '',
+        books: '',
+        isLoading: false
+    }
 
+    updateQuery = (query) => {
+        this.setState({ query: query })
+
+        if (query !== '') {
+            this.setState({ isLoading: true })
+
+            BooksAPI.search(query, 20).then((res) => {
+                !res.error ? this.setState({ books: res }) : null
+                this.setState({ isLoading: false })
+            })
+        } else {
+            this.setState({ books: '' })
+        }
     }
 
     render() {
@@ -14,19 +34,20 @@ class SearchApp extends React.Component {
                 <div className="search-books-bar">
                     <Link to="/" className="close-search">Close</Link>
                     <div className="search-books-input-wrapper">
-                        {/* 
-                        NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                        You can find these search terms here:
-                        https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-                        
-                        However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                        you don't find a specific author or title. Every search is limited by search terms.
-                        */}
-                        <input type="text" placeholder="Search by title or author" />
+                        <input type="text" placeholder="Search by title or author" onChange={(event) => this.updateQuery(event.target.value)} value={this.state.query} />
                     </div>
+                    {this.state.isLoading &&
+                        <div className="loading-spinner" />
+                    }
                 </div>
                 <div className="search-books-results">
-                    <ol className="books-grid"></ol>
+                    <ol className="books-grid">
+                        {this.state.books !== '' && this.state.books.map((book) => (
+                            <li key={book.id}>
+                                <Book book={book} />
+                            </li>
+                        ))}
+                    </ol>
                 </div>
             </div>
         )

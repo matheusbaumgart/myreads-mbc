@@ -14,10 +14,9 @@ class HomePage extends React.Component {
 
     componentDidMount() {
         this.sortBooks()
-        this.sortBooks = this.sortBooks.bind(this);
     }
 
-    sortBooks() {
+    sortBooks = () => {
         // Get all books and sort by shelves. (requires loadsh for the _.groupBy)
         BooksAPI.getAll().then((books) => {
             const sortedBooks = _.groupBy(books, (books) => {
@@ -40,9 +39,9 @@ class HomePage extends React.Component {
                     </div>
                     {this.state.books !== '' &&
                         <div className="list-books-content">
-                            <Bookshelf title="Currently Reading" books={this.state.books.currentlyReading} sortBooks={this.sortBooks} />
-                            <Bookshelf title="Want to Read" books={this.state.books.wantToRead} sortBooks={this.sortBooks} />
-                            <Bookshelf title="Read" books={this.state.books.read} sortBooks={this.sortBooks} />
+                            <Bookshelf title="Currently Reading" books={this.state.books.currentlyReading} updateBooks={this.sortBooks} />
+                            <Bookshelf title="Want to Read" books={this.state.books.wantToRead} updateBooks={this.sortBooks} />
+                            <Bookshelf title="Read" books={this.state.books.read} updateBooks={this.sortBooks} />
                         </div>
                     }
                     <div className="open-search">
