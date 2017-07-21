@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import _ from 'lodash'
 
 import * as BooksAPI from './BooksAPI'
 import './App.css'
@@ -9,23 +8,25 @@ import Bookshelf from './Bookshelf'
 
 class HomePage extends React.Component {
     state = {
-        books: ''
+        books: '',
+        shelves: ''
     }
 
     componentDidMount() {
-        this.sortBooks()
+        this.getBooks()
     }
 
-    sortBooks = () => {
-        // Get all books and sort by shelves. (requires loadsh for the _.groupBy)
+    getBooks = () => {
+        // Get all books.
         BooksAPI.getAll().then((books) => {
-            const sortedBooks = _.groupBy(books, (books) => {
-                return books.shelf
-            })
-
             // Update state with the list of books grouped by shelf.
             this.setState({
-                books: sortedBooks
+                shelves: {
+                    "read": books.filter((book) => book.shelf === "read"),
+                    "wantToRead": books.filter((book) => book.shelf === "wantToRead"),
+                    "currentlyReading": books.filter((book) => book.shelf === "currentlyReading")
+                },
+                books: books
             })
         })
     }
@@ -37,15 +38,18 @@ class HomePage extends React.Component {
                     <div className="list-books-title">
                         <h1>MyReads</h1>
                     </div>
-                    {this.state.books !== '' &&
+                    {this.state.shelves !== '' &&
                         <div className="list-books-content">
-                            <Bookshelf title="Currently Reading" books={this.state.books.currentlyReading} updateBooks={this.sortBooks} />
-                            <Bookshelf title="Want to Read" books={this.state.books.wantToRead} updateBooks={this.sortBooks} />
-                            <Bookshelf title="Read" books={this.state.books.read} updateBooks={this.sortBooks} />
+                            <Bookshelf title="Currently Reading" books={this.state.shelves.currentlyReading} updateBooks={this.getBooks} />
+                            <Bookshelf title="Want to Read" books={this.state.shelves.wantToRead} updateBooks={this.getBooks} />
+                            <Bookshelf title="Read" books={this.state.shelves.read} updateBooks={this.getBooks} />
                         </div>
                     }
                     <div className="open-search">
-                        <Link to="/search">Add a book</Link>
+                        <Link to={{
+                            pathname: '/search',
+                            state: { books: this.state.books }
+                        }}>Add a book</Link>
                     </div>
                 </div>
             </div>

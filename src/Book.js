@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import * as BooksAPI from './BooksAPI'
+import PropTypes from 'prop-types'
 
 class Book extends Component {
     state = {
@@ -14,11 +15,12 @@ class Book extends Component {
         event.persist();
 
         BooksAPI.update(book, event.target.value).then((res) => {
-            this.props.updateBooks();
-
-            this.setState({
-                isLoading: false
-            })
+            if (this.props.updateBooks)
+                this.props.updateBooks();
+            else
+                this.setState({
+                    isLoading: false
+                })
         })
     }
 
@@ -29,7 +31,7 @@ class Book extends Component {
             <div className="book">
                 <div className="book-top">
                     <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url("' + book.imageLinks.smallThumbnail + '")' }}></div>
-                    <div className="book-shelf-changer">
+                    <div className={this.state.isLoading ? "book-loading" : "book-shelf-changer"}>
                         <select defaultValue={book.shelf} onChange={(event) => this.handleMoveTo(book, event)}>
                             <option value="none" disabled>Move to...</option>
                             <option value="currentlyReading">Currently Reading</option>
@@ -50,6 +52,11 @@ class Book extends Component {
             </div>
         )
     }
+}
+
+Book.propTypes = {
+    book: PropTypes.object,
+    updateBooks: PropTypes.func
 }
 
 export default Book;
