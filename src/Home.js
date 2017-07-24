@@ -36,7 +36,7 @@ class HomePage extends React.Component {
             <div className="app">
                 <div className="list-books">
                     <div className="list-books-title">
-                        <h1>MyReads</h1>
+                        <h1>Matheus' Reads</h1>
                     </div>
                     {this.state.shelves !== '' &&
                         <div className="list-books-content">
